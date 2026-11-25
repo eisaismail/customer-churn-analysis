@@ -228,8 +228,8 @@ rf_prob <- predict(
 cat("\n=== CONFUSION MATRIX ===\n")
 
 cm <- table(
-  Predicted = rf_pred,
-  Actual = test_data$Churn
+  Predicted = factor(rf_pred, levels = c("No", "Yes")),
+  Actual = factor(test_data$Churn, levels = c("No", "Yes"))
 )
 
 print(cm)
@@ -248,10 +248,9 @@ tp <- cm["Yes", "Yes"]
 fp <- cm["Yes", "No"]
 fn <- cm["No", "Yes"]
 
-precision <- tp / (tp + fp)
-recall <- tp / (tp + fn)
-
-f1 <- 2 * precision * recall / (precision + recall)
+precision <- if ((tp + fp) == 0) 0 else tp / (tp + fp)
+recall <- if ((tp + fn) == 0) 0 else tp / (tp + fn)
+f1 <- if ((precision + recall) == 0) 0 else 2 * precision * recall / (precision + recall)
 
 cat("Precision:", round(precision, 3), "\n")
 cat("Recall:   ", round(recall, 3), "\n")
